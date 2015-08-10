@@ -43,8 +43,8 @@
 # INTERNAL VARIABLES {{{
 
 RECORD_FILE=.record
-PWD=`pwd`
-README_FILES=`ls -1 | grep -i readme`
+PWD=$(pwd)
+README_FILES=$(ls -1 | grep -i readme)
 WGET_OPT=-c -nv
 CURL_OPT=
 RECORD_SCRIPT=.mkrecord
@@ -54,7 +54,7 @@ GIT_SOURCES=
 
 # INTERNAL FUNCTIONS {{{
 record_file = \
-		PTYPE=`cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i'` ;\
+		PTYPE=$(cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i') ;\
 		echo $(VIMRUNTIME)/$$PTYPE/$(1) >> $(2)
 
 # }}}
@@ -92,15 +92,15 @@ install_git_source = \
 
 # install file by inspecting content
 install_file = \
-		PTYPE=`cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i'` ;\
+		PTYPE=$(cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i') ;\
 		cp -v $(1) $(VIMRUNTIME)/$$PTYPE/$(1)
 
 link_file = \
-		PTYPE=`cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i'` ;\
+		PTYPE=$(cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i') ;\
 		cp -v $(1) $(VIMRUNTIME)/$$PTYPE/$(1)
 
 unlink_file = \
-		PTYPE=`cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i'` ;\
+		PTYPE=$(cat $(1) | perl -nle 'print $$1 if /^"\s*script\s*type:\s*(\S*)$$/i') ;\
 		rm -fv $(VIMRUNTIME)/$$PTYPE/$(1)
 
 # fetch script from an url
@@ -109,9 +109,9 @@ fetch_url = \
 			exit								\
 		; fi	 							    \
 		; echo " => $(2)"						\
-		; if [[ ! -z `which curl` ]] ; then   \
+		; if [[ ! -z $(which curl) ]] ; then   \
 			curl $(CURL_OPT) $(1) -o $(2) ;					\
-		; elif [[ ! -z `which wget` ]] ; then 	\
+		; elif [[ ! -z $(which wget) ]] ; then 	\
 			wget $(WGET_OPT) $(1) -O $(2)  				    \
 		; fi  									\
 		; echo $(2) >> .bundlefiles
@@ -129,9 +129,9 @@ fetch_github = \
 			exit								\
 		; fi	 							    \
 		; echo " => $(5)"						\
-		; if [[ ! -z `which curl` ]] ; then                        	    \
+		; if [[ ! -z $(which curl) ]] ; then                        	    \
 			curl $(CURL_OPT) http://github.com/$(1)/$(2)/raw/$(3)/$(4) -o $(5)      \
-		; elif [[ ! -z `which wget` ]] ; then                               \
+		; elif [[ ! -z $(which wget) ]] ; then                               \
 			wget $(WGET_OPT) http://github.com/$(1)/$(2)/raw/$(3)/$(4) -O $(5)  \
 		; fi									\
 		; echo $(5) >> .bundlefiles
@@ -142,7 +142,7 @@ fetch_local = @cp -v $(1) $(2) \
 
 # 1: NAME , 2: URI
 dep_from_git = \
-		D=/tmp/$(1)-$$RANDOM ; git clone $(2) $$D ; cd $$D ; make install ; 
+		D=/tmp/$(1)-$$RANDOM ; git clone $(2) $$D ; cd $$D ; make install ;
 
 dep_from_svn = \
 		D=/tmp/$(1)-$$RANDOM ; svn checkout $(2) $$D ; cd $$D ; make install ;
@@ -152,18 +152,18 @@ dep_from_svn = \
 # ======= DEFAULT CONFIG ======= {{{
 
 # Default plugin name
-NAME=`basename \`pwd\``
+NAME=$(basename $(pwd))
 VERSION=0.1
 
 # Files to add to tarball:
-DIRS=`ls -1F | grep / | sed -e 's/\///'`
+DIRS=$(ls -1F | grep / | sed -e 's/\///')
 
 # Runtime path to install:
 VIMRUNTIME=~/.vim
 
 # Other Files to be added:
-FILES=`ls -1 | grep '.vim$$'`
-MKFILES=Makefile `ls -1 | grep '.mk$$'`
+FILES=$(ls -1 | grep '.vim$$')
+MKFILES=Makefile $(ls -1 | grep '.mk$$')
 
 # ======== USER CONFIG ======= {{{
 #   please write config in config.mk
@@ -175,12 +175,12 @@ MKFILES=Makefile `ls -1 | grep '.mk$$'`
 #
 # Custom dir list:
 #
-# 	DIRS=autoload after doc syntax plugin 
+# 	DIRS=autoload after doc syntax plugin
 #
 # Files to add to tarball:
 #
 # 	FILES=
-# 
+#
 # Bundle dependent scripts:
 #
 # 	bundle-deps:
@@ -210,8 +210,8 @@ install-deps:
 	$(call install_git_sources)
 
 check-require:
-	@if [[ -n `which wget` || -n `which curl` || -n `which fetch` ]]; then echo "wget|curl|fetch: OK" ; else echo "wget|curl|fetch: NOT OK" ; fi
-	@if [[ -n `which vim` ]] ; then echo "vim: OK" ; else echo "vim: NOT OK" ; fi
+	@if [[ -n $(which wget) || -n $(which curl) || -n $(which fetch) ]]; then echo "wget|curl|fetch: OK" ; else echo "wget|curl|fetch: NOT OK" ; fi
+	@if [[ -n $(which vim) ]] ; then echo "vim: OK" ; else echo "vim: NOT OK" ; fi
 
 config:
 	@rm -f $(CONFIG_FILE)
@@ -243,11 +243,11 @@ init-runtime:
 			mkdir -vp $(VIMRUNTIME)/$$dir ; done ; fi
 
 release:
-	if [[ -n `which vimup` ]] ; then \
+	if [[ -n $(which vimup) ]] ; then \
 	fi
 
 pure-install:
-	@echo "Using Shell:" $(SHELL) 
+	@echo "Using Shell:" $(SHELL)
 	@echo "Installing"
 	@if [[ -n "$(DIRS)" ]] ; then find $(DIRS) -type f | while read file ; do \
 			cp -v $$file $(VIMRUNTIME)/$$file ; done ; fi
@@ -343,18 +343,18 @@ clean: clean-bundle-deps
 clean-bundle-deps:
 	@echo "Removing Bundled scripts..."
 	@if [[ -e .bundlefiles ]] ; then \
-		rm -fv `echo \`cat .bundlefiles\``; \
+		rm -fv $(echo $(cat .bundlefiles)); \
 	fi
 	@rm -fv .bundlefiles
 
 update:
 	@echo "Updating Makefile..."
 	@URL=http://github.com/c9s/vim-makefile/raw/master/Makefile ; \
-	if [[ -n `which curl` ]]; then \
+	if [[ -n $(which curl) ]]; then \
 		curl $$URL -o Makefile ; \
-	if [[ -n `which wget` ]]; then \
+	if [[ -n $(which wget) ]]; then \
 		wget -c $$URL ; \
-	elif [[ -n `which fetch` ]]; then \
+	elif [[ -n $(which fetch) ]]; then \
 		fetch $$URL ; \
 	fi
 
